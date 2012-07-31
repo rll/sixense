@@ -10,5 +10,6 @@ Makefile
 CMakeFiles/
 CMakeCache.txt
 *.cmake
+.*project
 
 src/sixense/msg/*
