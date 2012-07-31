@@ -1,0 +1,12 @@
+<package>
+  <description brief="sixense">
+  </description>
+  <author></author>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  <depend package="bullet"/>
+  <depend package="geometry_msgs"/>
+  <depend package="tf"/>
+</package>
+
+

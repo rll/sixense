@@ -1,0 +1,14 @@
+syntax: glob
+*~
+*.pyc
+*.pyo
+build/
+bin/
+msg_gen/
+srv_gen/
+Makefile
+CMakeFiles/
+CMakeCache.txt
+*.cmake
+
+src/sixense/msg/*
