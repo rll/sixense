@@ -1,7 +1,7 @@
 import roslib
 roslib.load_manifest("sixense")
 import rospy
-from hydra_msgs.msg import Calib
+from sixense.msg import Calib
 
 class HydraPub:
     def __init__(self):

@@ -6,7 +6,7 @@
   <depend package="rospy"/>
   <depend package="bullet"/>
   <depend package="geometry_msgs"/>
-  <depend package="hydra_msgs"/>
+  <!-- depend package="hydra_msgs"/ -->
   <depend package="tf"/>
 </package>
 

@@ -544,50 +544,41 @@ void draw_controller_info() {
   sixenseSetActiveBase(0);
   collectDataForGraph();
   glColor3d(0.1,0.1,0.4);
-  shapesPrintf (next_line, 3, "Base 0: %d controllers", sixenseGetNumActiveControllers() );
+  shapesPrintf (next_line++, 3, "Base 0: %d controllers", sixenseGetNumActiveControllers() );
 
-  next_line++;
+  shapesPrintf (next_line++, 3, "Light = left :: Dark = right" );
 
-  if( is_logging ) {
+    if( is_logging ) {
     glColor3d(0.8,0.1,0.4);
-    shapesPrintf (next_line, 3, "Logging ON. Press 'L' to stop." );
+    shapesPrintf (next_line++, 3, "Logging ON. Press 'L' to stop." );
   } else {
     glColor3d(0.1,0.1,0.4);
-    shapesPrintf (next_line, 3, "Logging OFF. Press 'L' to start." );
+    shapesPrintf (next_line++, 3, "Logging OFF. Press 'L' to start." );
   }  
 
 
-  next_line++;
-
-  shapesPrintf (next_line, 3, "Press '[' to zoom out, ']' to zoom in." );
-
-  next_line++;
+  shapesPrintf (next_line++, 3, "Press '[' to zoom out, ']' to zoom in." );
 
   if( graph_mode == 0 ) 
-    shapesPrintf (next_line, 3, "Press 'g' to cycle through position, velocity and acceleration graphs. Graphs are OFF." );
+    shapesPrintf (next_line++, 3, "Press 'g' to cycle through position, velocity and acceleration graphs. Graphs are OFF." );
   else if( graph_mode == 1 ) 
-    shapesPrintf (next_line, 3, "Press 'g' to cycle through position, velocity and acceleration graphs. Currently plotting POSITION." );
+    shapesPrintf (next_line++, 3, "Press 'g' to cycle through position, velocity and acceleration graphs. Currently plotting POSITION." );
   else if( graph_mode == 2 ) 
-    shapesPrintf (next_line, 3, "Press 'g' to cycle through position, velocity and acceleration graphs. Currently plotting VELOCITY." );
+    shapesPrintf (next_line++, 3, "Press 'g' to cycle through position, velocity and acceleration graphs. Currently plotting VELOCITY." );
   else if( graph_mode == 3 ) 
-    shapesPrintf (next_line, 3, "Press 'g' to cycle through position, velocity and acceleration graphs. Currently plotting ACCELERATION." );
+    shapesPrintf (next_line++, 3, "Press 'g' to cycle through position, velocity and acceleration graphs. Currently plotting ACCELERATION." );
 
-  next_line++;
-
-  shapesPrintf (next_line, 3, "Press 'm' to toggle drawing of mouse cursors." );
+  shapesPrintf (next_line++, 3, "Press 'm' to toggle drawing of mouse cursors." );
 
 
 
-  next_line++;
   next_line++;
 
   if( display_pos_enabled ) {
 
     i=0;
 
-    shapesPrintf (next_line, 3, "Controller position data. Press 'P' to hide:" );
-
-    next_line++;
+    shapesPrintf (next_line++, 3, "Controller position data. Press 'P' to hide:" );
 
     for( base=0; base<sixenseGetMaxBases(); base++ ) {
       sixenseSetActiveBase(base);
@@ -611,7 +602,7 @@ void draw_controller_info() {
     }
 
   } else {
-    shapesPrintf (next_line, 3, "Press 'P' to display controller position data." );
+    shapesPrintf (next_line++, 3, "Press 'P' to display controller position data." );
 
   }
 
