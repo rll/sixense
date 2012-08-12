@@ -2,6 +2,7 @@
   <description brief="sixense">
   </description>
   <author></author>
+  <url>http://github.com/benkehoe/sixense</url>
   <depend package="roscpp"/>
   <depend package="rospy"/>
   <depend package="bullet"/>

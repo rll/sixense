@@ -755,10 +755,19 @@ double timeOfDay() {
   return tim.tv_sec+(tim.tv_usec/1000000.0);
 }
 
+py::object rospy_mod;
+py::object rospy_is_shutdown;
 py::object hydra_pub_mod;
 py::object py_pub;
 
 void publishROS(const sixenseAllControllerData& acd) {
+  py::object is_shutdown_obj = rospy_is_shutdown();
+  bool is_shutdown = py::extract<bool>(is_shutdown_obj);
+
+  if (is_shutdown) {
+	glutLeaveMainLoop();
+	return;
+  }
 
   // sixense::Calib msg;
   py::object msg = hydra_pub_mod.attr("Calib")();
@@ -908,9 +917,12 @@ int main(int argc, char *argv[])
 	     "import roslib\n"
 	     "roslib.load_manifest('rospy')\n"
 	     "roslib.load_manifest('sixense')\n"
-	     "import rospy\n"
-	     "rospy.init_node('hydra_driver')\n"
+	     "import rospy as rp\n"
+	     "rp.init_node('hydra_driver')\n"
 	     , main_namespace);
+
+    rospy_mod = py::import("rospy");
+    rospy_is_shutdown = rospy_mod.attr("is_shutdown");
 
     hydra_pub_mod = py::import("sixense.hydra_pub");
     py_pub = hydra_pub_mod.attr("HydraPub")();
