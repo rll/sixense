@@ -27,6 +27,8 @@ using namespace std;
 static int is_logging = 0;
 static FILE *log_file = 0;
 
+#define HYDRA_POSITION_UNITS_TO_METERS(val) (0.001 * (val))
+
 // whether or not to write the current controller positions on the screen.
 static int display_pos_enabled = 0;
 
@@ -757,6 +759,7 @@ double timeOfDay() {
 
 py::object rospy_mod;
 py::object rospy_is_shutdown;
+py::object rospy_time_now;
 py::object hydra_pub_mod;
 py::object py_pub;
 
@@ -775,10 +778,14 @@ void publishROS(const sixenseAllControllerData& acd) {
     const sixenseControllerData& scd = acd.controllers[i];
     py::object paddle = msg.attr("paddles")[i];
 
-    py::object translation = paddle.attr("transform").attr("translation");
-    translation.attr("x") = -scd.pos[2];
-    translation.attr("y") = -scd.pos[0];
-    translation.attr("z") = scd.pos[1];
+    py::object now = rospy_time_now();
+    //msg.attr("header").attr("frame_id") = "hydra";
+    msg.attr("header").attr("stamp") = now;
+
+	py::object translation = paddle.attr("transform").attr("translation");
+    translation.attr("x") = HYDRA_POSITION_UNITS_TO_METERS(-scd.pos[2]);
+    translation.attr("y") = HYDRA_POSITION_UNITS_TO_METERS(-scd.pos[0]);
+    translation.attr("z") = HYDRA_POSITION_UNITS_TO_METERS(scd.pos[1]);
 
     py::object rotation = paddle.attr("transform").attr("rotation");
     rotation.attr("x") = -scd.rot_quat[2];
@@ -921,11 +928,12 @@ int main(int argc, char *argv[])
 	     "rp.init_node('hydra_driver')\n"
 	     , main_namespace);
 
-    rospy_mod = py::import("rospy");
-    rospy_is_shutdown = rospy_mod.attr("is_shutdown");
+  rospy_mod = py::import("rospy");
+  rospy_is_shutdown = rospy_mod.attr("is_shutdown");
+  rospy_time_now = rospy_mod.attr("Time").attr("now");
 
-    hydra_pub_mod = py::import("sixense.hydra_pub");
-    py_pub = hydra_pub_mod.attr("HydraPub")();
+  hydra_pub_mod = py::import("sixense.hydra_pub");
+  py_pub = hydra_pub_mod.attr("HydraPub")();
   int i;
   float hemi_vec[3] = { 0, 1, 0 };
 
