@@ -15,6 +15,7 @@
 #include <sixense_utils/controller_manager/controller_manager.hpp>
 
 #include <deque>
+#include <sstream>
 
 // #include <ros/ros.h>
 // #include <sixense/Calib.h>
@@ -590,11 +591,15 @@ void draw_controller_info() {
 
 	if( sixenseIsControllerEnabled( cont ) ) {
 
-	  shapesPrintf( next_line + i, 3, "base: %d controller: %d   pos: %f %f %f   rot_mat: %f %f %f  %f %f %f  %f %f %f", base, cont,
+	  sixenseMath::tb_angles tb(acd.controllers[cont].rot_mat);
+	  std::stringstream ss;
+	  ss << "Ctrlr " << base << cont+1 << ":";
+	  shapesPrintf( next_line + i, 3, "%s (% 3.1f,% 3.1f,% 3.1f) Y: % 3.1f deg P: % 3.1f deg R: % 3.1f deg", ss.str().c_str(),
 			acd.controllers[cont].pos[0], acd.controllers[cont].pos[1], acd.controllers[cont].pos[2],
-			acd.controllers[cont].rot_mat[0][0], acd.controllers[cont].rot_mat[0][1], acd.controllers[cont].rot_mat[0][2],
-			acd.controllers[cont].rot_mat[1][0], acd.controllers[cont].rot_mat[1][1], acd.controllers[cont].rot_mat[1][2],
-			acd.controllers[cont].rot_mat[2][0], acd.controllers[cont].rot_mat[2][1], acd.controllers[cont].rot_mat[2][2] );
+			tb.yaw_deg, tb.pitch_deg, tb.roll_deg);
+//			acd.controllers[cont].rot_mat[0][0], acd.controllers[cont].rot_mat[0][1], acd.controllers[cont].rot_mat[0][2],
+//			acd.controllers[cont].rot_mat[1][0], acd.controllers[cont].rot_mat[1][1], acd.controllers[cont].rot_mat[1][2],
+//			acd.controllers[cont].rot_mat[2][0], acd.controllers[cont].rot_mat[2][1], acd.controllers[cont].rot_mat[2][2] );
 
 	  i++;
 

@@ -236,6 +236,140 @@ namespace sixenseMath {
 		Vector3	_p0, _p1, _p2;
 
 	};
+	
+	inline float fix_angle(float angle,float center = 0) {
+		float test_angle = angle;
+		int cnt = 1;
+		while ((test_angle-center) > M_PI) {
+			test_angle = angle - cnt * 2*M_PI;
+			cnt++;
+		}
+		angle = test_angle;
+		cnt = 1;
+		while ((test_angle-center) < -M_PI) {
+			test_angle = angle + cnt * 2*M_PI;
+			cnt++;
+		}
+		return test_angle;
+	}
+
+#ifndef TB_ANGLES_CLOSE_ENOUGH
+#define TB_ANGLES_CLOSE_ENOUGH 0.0001
+#endif
+
+	class tb_angles {
+	public:
+		float yaw;
+		float yaw_deg;
+		float pitch;
+		float pitch_deg;
+		float roll;
+		float roll_deg;
+	
+		tb_angles(float yaw, float pitch, float roll,bool deg=true) {
+			if (deg) {
+				this->yaw = yaw * M_PI / 180.;
+				this->yaw_deg = yaw;
+				this->pitch = pitch * M_PI / 180.;
+				this->pitch_deg = pitch;
+				this->roll = roll * M_PI / 180.;
+				this->roll_deg = roll;
+			} else {
+				this->yaw = yaw;
+				this->yaw_deg = yaw * 180. / M_PI;
+				this->pitch = pitch;
+				this->pitch_deg = pitch * 180. / M_PI;
+				this->roll = roll;
+				this->roll_deg = roll * 180. / M_PI;
+			}
+		}
+		tb_angles(sixenseMath::Quat& q) { sixenseMath::Matrix3 m = sixenseMath::Matrix3::rotation(q); init(m); }
+		tb_angles(sixenseMath::Matrix3& R) { init(R); }
+
+		template<typename OtherType>
+		tb_angles(OtherType R) {
+			sixenseMath::Matrix3 ssR;
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					ssR[i][j] = R[i][j];
+				}
+			}
+			init(ssR);
+		}
+	
+		sixenseMath::Quat toQuaternion() const { sixenseMath::Quat(toMatrix()); }
+		sixenseMath::Matrix4 toTransform() const { return sixenseMath::Matrix4(toMatrix()); }
+		sixenseMath::Matrix3 toMatrix() const {
+			sixenseMath::Matrix3 Ryaw(
+					cos(yaw), -sin(yaw), 0,
+					sin(yaw),  cos(yaw), 0,
+					0,         0,        1);
+			sixenseMath::Matrix3 Rpitch(
+					 cos(pitch), 0, sin(pitch),
+					 0,          1, 0,
+					-sin(pitch), 0, cos(pitch));
+			sixenseMath::Matrix3 Rroll(
+					1,  0,          0,
+					0,  cos(roll), -sin(roll),
+					0,  sin(roll),  cos(roll));
+			return Ryaw * Rpitch * Rroll;
+		}
+	
+	private:
+		void init(sixenseMath::Matrix3& R) {
+			yaw = 0;
+			pitch = 0;
+			roll = 0;
+
+			bool skip = false;
+			if (fabs(R[0][1]-R[1][0]) < TB_ANGLES_CLOSE_ENOUGH && fabs(R[0][2]-R[2][0]) < TB_ANGLES_CLOSE_ENOUGH && fabs(R[1][2]-R[2][1]) < TB_ANGLES_CLOSE_ENOUGH) {
+				//matrix is symmetric
+				if (fabs(R[0][1]+R[1][0]) < TB_ANGLES_CLOSE_ENOUGH && fabs(R[0][2]+R[2][0]) < TB_ANGLES_CLOSE_ENOUGH && fabs(R[1][2]+R[2][1]) < TB_ANGLES_CLOSE_ENOUGH) {
+					//diagonal
+					if (R[0][0] > 0) {
+						if (R[1][1] > 0) {
+							skip = true;
+						} else {
+							roll = M_PI;
+						}
+					} else if (R[1][1] > 0) {
+						yaw = M_PI;
+						pitch = M_PI;
+					} else {
+						yaw = M_PI;
+					}
+					skip = true;
+				}
+			}
+
+			if (!skip) {
+				sixenseMath::Vector3 vx = R * sixenseMath::Vector3(1,0,0);
+				sixenseMath::Vector3 vy = R * sixenseMath::Vector3(0,1,0);
+
+				yaw = atan2(vx[1],vx[0]);
+				pitch = atan2(-vx[2], sqrt(vx[0]*vx[0] + vx[1]*vx[1]));
+
+				sixenseMath::Matrix3 Ryaw(
+							 cos(yaw), -sin(yaw), 0,
+							 sin(yaw),  cos(yaw), 0,
+							 0,         0,        1);
+				sixenseMath::Matrix3 Rpitch(
+						 cos(pitch), 0, sin(pitch),
+						 0,          1, 0,
+						-sin(pitch), 0, cos(pitch));
+				sixenseMath::Vector3 vyp = Ryaw * Rpitch * sixenseMath::Vector3(0,1,0);
+				sixenseMath::Vector3 vzp = Ryaw * Rpitch * sixenseMath::Vector3(0,0,1);
+
+				float coeff = (vzp * vy) >= 0 ? 1 : -1;
+
+				roll = coeff * acos(vyp *vy);
+			}
+
+			yaw_deg = yaw * 180. / M_PI;
+			pitch_deg = pitch * 180. / M_PI;
+			roll_deg = roll * 180. / M_PI;
+		}
+	};
 
 
 
