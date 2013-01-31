@@ -17,7 +17,7 @@ include_directories(include)
 link_directories(${PROJECT_SOURCE_DIR}/lib)
 
 add_executable(driver src/driver.cpp)
-target_link_libraries(driver glut sixense_x64 sixense_utils_x64 ${ROS_LIBRARIES} boost_python python2.7)
+target_link_libraries(driver GL glut sixense_x64 sixense_utils_x64 ${ROS_LIBRARIES} boost_python python2.7)
 
 ##add_executable(dlopen_test src/dlopen_test.cpp)
 #target_link_libraries(dlopen_test dl)

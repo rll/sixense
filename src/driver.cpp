@@ -959,7 +959,7 @@ int main(int argc, char *argv[])
 		rospy_is_shutdown = rospy_mod.attr("is_shutdown");
 		rospy_time_now = rospy_mod.attr("Time").attr("now");
 
-		hydra_pub_mod = py::import("sixense.hydra_pub");
+		hydra_pub_mod = py::import("sixense.internal.hydra_pub");
 		py_pub = hydra_pub_mod.attr("HydraPub")();
 		int i;
 		float hemi_vec[3] = { 0, 1, 0 };
