@@ -970,7 +970,7 @@ int main(int argc, char *argv[])
 		//glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
 		glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
-		glutCreateWindow("Sixense Test");
+		glutCreateWindow("Hydra Viewer");
 
 		glutReshapeFunc(resize);
 		//  glutDisplayFunc(display);
